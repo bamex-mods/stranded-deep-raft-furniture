@@ -1,0 +1,54 @@
+{
+    "schemaVersion":  1,
+    "locale":  "en",
+    "subtitle":  "Turn the raft into a persistent mobile base with furniture and survival structures.",
+    "description":  "Raft Furniture expands the raft from transport into a practical mobile base. It supports selected furniture and survival structures on deck, preserves movement and cooking attachments, provides split-screen-aware reposition controls, and keeps supported raft objects associated with the raft across saves.",
+    "features":  [
+                     "Tables and chairs can be used as persistent raft furniture.",
+                     "Water Still can be placed and repositioned on the raft.",
+                     "Light Hook can be placed and repositioned on the raft.",
+                     "Camp Fire, Fire Pit and Smoker keep their vanilla construction chain while working on the raft.",
+                     "Food attached to raft cooking stations is re-anchored to the station when required.",
+                     "Container Shelf can be freely repositioned while retaining native crate/socket behavior.",
+                     "Reposition controls are resolved for the owning local player in local split-screen.",
+                     "L2/LT is used for drag/drop and L1/LB rotates the active target in 15-degree steps.",
+                     "Supported furniture uses persistent raft-local attachment data rather than relying only on transform parenting.",
+                     "Older/unparented supported raft furniture has recovery paths into the persistent attachment model.",
+                     "Optional Mod Settings integration exposes five toggles while the BepInEx config remains the source of truth.",
+                     "Manual custom reposition is conservative and disabled by default.",
+                     "An Emergency Upright action can level the nearest raft.",
+                     "Update policy requests backup of game/config/sidecar state before replacement."
+                 ],
+    "screenshotCaptions":  {
+
+                           },
+    "faq":  [
+                {
+                    "question":  "Does it support local split-screen?",
+                    "answer":  "Yes. Reposition input is resolved per local player and is designed for two-player local split-screen sessions."
+                },
+                {
+                    "question":  "Is Mod Settings required?",
+                    "answer":  "No. Mod Settings is a soft dependency used only to expose Raft Furniture settings in the in-game settings UI. The mod continues to work from its BepInEx config without it."
+                },
+                {
+                    "question":  "What happens to existing objects if I disable a category?",
+                    "answer":  "Existing placed objects are not intentionally deleted or detached. Category toggles stop the mod from providing new placement/reposition behavior for that category."
+                },
+                {
+                    "question":  "Where is raft attachment state stored?",
+                    "answer":  "The mod uses BepInEx/config/StrandedDeepRaftFurniture/Attachments.json for persistent object-to-raft association and raft-local pose data."
+                },
+                {
+                    "question":  "Does Container Shelf keep its crate slots?",
+                    "answer":  "Yes. Free reposition moves the shelf root while preserving its native crate/socket components."
+                },
+                {
+                    "question":  "What does Emergency Upright do?",
+                    "answer":  "It levels the nearest raft as a recovery action. It is exposed as a button through optional Mod Settings integration."
+                }
+            ],
+    "changelog":  [
+
+                  ]
+}

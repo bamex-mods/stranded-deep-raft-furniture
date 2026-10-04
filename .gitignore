@@ -1,0 +1,25 @@
+﻿# Generated build output
+build/
+bin/
+obj/
+
+# Generated distribution output
+dist/out/
+
+# IDE / temporary files
+.vs/
+.idea/
+*.user
+*.suo
+*.tmp
+*.bak
+
+# Logs / diagnostics
+*.log
+
+# Local/runtime state
+Attachments.json
+
+# Release artifacts do not belong in source repository
+*.zip
+*.zip.sha256

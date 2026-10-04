@@ -1,0 +1,44 @@
+{
+    "schemaVersion": 1,
+    "id": "raft-furniture",
+    "name": "Stranded Deep Raft Furniture",
+    "version": "0.2.13",
+    "artifactBaseName": "StrandedDeepRaftFurniture",
+    "type": "mod",
+    "category": "building",
+    "description": "Turns the raft into a mobile base with supported furniture, survival structures, split-screen-aware repositioning, and persistent raft attachment.",
+    "packagePaths": [
+        "BepInEx/plugins/StrandedDeepRaftFurniture"
+    ],
+    "ownedPaths": [
+        "BepInEx/plugins/StrandedDeepRaftFurniture"
+    ],
+    "install": {
+        "restartRequired": true
+    },
+    "dependencies": [
+        {
+            "id": "bepinex",
+            "required": true
+        }
+    ],
+    "optionalDependencies": [
+        {
+            "id": "mod-settings",
+            "minimumVersion": "0.2.0"
+        }
+    ],
+    "conflicts": [],
+    "persistence": {
+        "usesBepInExConfig": true,
+        "usesGameSave": true,
+        "usesSidecarData": true,
+        "backupBeforeUpdate": true
+    },
+    "publishing": {
+        "repository": "stranded-deep-raft-furniture",
+        "tag": "v0.2.13",
+        "releaseChannel": "stable"
+    },
+    "bepInExGuid": "bamex.strandeddeep.raftfurniture"
+}
