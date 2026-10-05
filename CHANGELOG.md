@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.14 - 2026-10-05
+
+- Added Russian/English Mod Settings localization.
+- Synced the vendored Mod Settings reflection bridge with the authoritative bilingual SDK.
+- No gameplay, controller, attachment or persistence behavior changed.
+- Russian/English Mod Settings and local split-screen gameplay were field-tested before publication.
+
 ## 0.2.13 - 2026-10-04
 
 - Fixes violent raft linear/angular impulses while repositioning `Water Still` and the `Camp Fire -> Fire Pit -> Smoker` `STRUCTURE_SMALL` chain.

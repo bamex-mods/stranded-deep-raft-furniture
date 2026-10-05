@@ -2,7 +2,14 @@
 
 Stranded Deep Raft Furniture turns the raft into a practical mobile base by allowing selected furniture and survival structures to be placed or repositioned on deck while preserving raft movement, physics, local split-screen controls, and persistence.
 
-Current stable version: `0.2.13`
+Current stable version: `0.2.14`
+
+## 0.2.14 Mod Settings localization
+
+- Added Russian/English localization for all six Mod Settings controls.
+- Synced the vendored reflection bridge with the authoritative bilingual SDK.
+- Raft attachment, placement, physics, controller ownership and persistence are unchanged.
+- Russian/English Mod Settings and local split-screen raft behavior were field-tested before publication.
 
 ## 0.2.13 physics-safety update
 

@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "id": "raft-furniture",
     "name": "Stranded Deep Raft Furniture",
-    "version": "0.2.13",
+    "version": "0.2.14",
     "artifactBaseName": "StrandedDeepRaftFurniture",
     "type": "mod",
     "category": "building",
@@ -25,7 +25,7 @@
     "optionalDependencies": [
         {
             "id": "mod-settings",
-            "minimumVersion": "0.2.0"
+            "minimumVersion": "0.3.1"
         }
     ],
     "conflicts": [],
@@ -37,7 +37,7 @@
     },
     "publishing": {
         "repository": "stranded-deep-raft-furniture",
-        "tag": "v0.2.13",
+        "tag": "v0.2.14",
         "releaseChannel": "stable"
     },
     "bepInExGuid": "bamex.strandeddeep.raftfurniture"

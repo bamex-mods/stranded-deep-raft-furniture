@@ -20,7 +20,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
     [BepInPlugin(
         "bamex.strandeddeep.raftfurniture",
         "BamEx Raft Furniture",
-        "0.2.13"
+        "0.2.14"
     )]
     [BepInDependency(
         "com.bamex.strandeddeep.modsettings",
@@ -38,7 +38,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
             Instance = this;
             Log = Logger;
 
-            Logger.LogInfo("BamEx Raft Furniture v0.2.13 loading");
+            Logger.LogInfo("BamEx Raft Furniture v0.2.14 loading");
 
             RaftFurnitureSettings.Initialize(Config);
             RaftFurnitureSettings.RegisterModSettings();
@@ -225,58 +225,74 @@ namespace BamEx.StrandedDeep.RaftFurniture
         {
             try
             {
-                ModSettingsClient.RegisterMod(
+                ModSettingsClient.RegisterModLocalized(
                     ModId,
                     "ПЛОТ — МЕБЕЛЬ И ПОСТРОЙКИ",
+                    "RAFT FURNITURE & STRUCTURES",
                     500);
 
-                ModSettingsClient.AddToggle(
+                ModSettingsClient.AddToggleLocalized(
                     ModId,
                     "water_still",
                     "Водосборник на плоту",
+                    "Water Still on Raft",
                     100,
                     "Вкл.",
+                    "On",
                     "Выкл.",
+                    "Off",
                     delegate { return AllowWaterStillOnRaft; },
                     delegate(bool value) { _allowWaterStillOnRaft.Value = value; });
 
-                ModSettingsClient.AddToggle(
+                ModSettingsClient.AddToggleLocalized(
                     ModId,
                     "campfire_structures",
                     "Костёр и коптильня на плоту",
+                    "Camp Fire Structures on Raft",
                     200,
                     "Вкл.",
+                    "On",
                     "Выкл.",
+                    "Off",
                     delegate { return AllowCampfireStructuresOnRaft; },
                     delegate(bool value) { _allowCampfireStructuresOnRaft.Value = value; });
 
-                ModSettingsClient.AddToggle(
+                ModSettingsClient.AddToggleLocalized(
                     ModId,
                     "light_hook",
                     "Крюк для факела на плоту",
+                    "Light Hook on Raft",
                     300,
                     "Вкл.",
+                    "On",
                     "Выкл.",
+                    "Off",
                     delegate { return AllowLightHookOnRaft; },
                     delegate(bool value) { _allowLightHookOnRaft.Value = value; });
 
-                ModSettingsClient.AddToggle(
+                ModSettingsClient.AddToggleLocalized(
                     ModId,
                     "container_shelf_reposition",
                     "Свободное перемещение полок",
+                    "Free Container Shelf Repositioning",
                     400,
                     "Вкл.",
+                    "On",
                     "Выкл.",
+                    "Off",
                     delegate { return AllowContainerShelfReposition; },
                     delegate(bool value) { _allowContainerShelfReposition.Value = value; });
 
-                ModSettingsClient.AddToggle(
+                ModSettingsClient.AddToggleLocalized(
                     ModId,
                     "manual_reposition",
                     "Ручное перемещение объектов",
+                    "Manual Object Repositioning",
                     500,
                     "Вкл.",
+                    "On",
                     "Выкл.",
+                    "Off",
                     delegate { return AllowManualReposition; },
                     delegate(bool value)
                     {
@@ -285,12 +301,14 @@ namespace BamEx.StrandedDeep.RaftFurniture
                             RaftRepositionController.CancelActiveFromExternal("MANUAL_REPOSITION_DISABLED");
                     });
 
-                ModSettingsClient.AddButton(
+                ModSettingsClient.AddButtonLocalized(
                     ModId,
                     "emergency_upright",
                     "Аварийно выровнять плот",
+                    "Emergency Raft Upright",
                     600,
                     "Выровнять",
+                    "LEVEL RAFT",
                     delegate
                     {
                         RaftEmergencyRecovery.LevelNearestRaft();
@@ -3427,7 +3445,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
 
             EmitRaw("");
             EmitRaw("============================================================");
-            EmitRaw("SESSION START v0.2.13 diagnostic observer " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            EmitRaw("SESSION START v0.2.14 diagnostic observer " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
             EmitRaw("Mode: observer only; production follower/persistence handled by RaftAttachmentRegistry");
             EmitRaw("============================================================");
 
@@ -4345,7 +4363,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
 
             Emit(
                 "INIT",
-                "v0.2.13 persistent follower initialized. records=" +
+                "v0.2.14 persistent follower initialized. records=" +
                 Records.Count +
                 " file=" + PersistenceFile
             );

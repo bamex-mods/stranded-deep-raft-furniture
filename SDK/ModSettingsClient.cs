@@ -185,6 +185,281 @@ namespace Bamex.StrandedDeep.ModSettings
                 });
         }
 
+        public static bool RegisterModLocalized(
+            string modId,
+            string displayNameRussian,
+            string displayNameEnglish,
+            int order)
+        {
+            bool ok =
+                Invoke(
+                    "RegisterModLocalized",
+                    new Type[]
+                    {
+                        typeof(string),
+                        typeof(string),
+                        typeof(string),
+                        typeof(int)
+                    },
+                    new object[]
+                    {
+                        modId,
+                        displayNameRussian,
+                        displayNameEnglish,
+                        order
+                    });
+
+            if (ok)
+                return true;
+
+            return RegisterMod(
+                modId,
+                displayNameRussian,
+                order);
+        }
+
+        public static bool AddSliderLocalized(
+            string modId,
+            string settingId,
+            string labelRussian,
+            string labelEnglish,
+            int order,
+            float min,
+            float max,
+            float step,
+            float displayMultiplier,
+            string suffixRussian,
+            string suffixEnglish,
+            int decimals,
+            Func<float> getter,
+            Action<float> setter)
+        {
+            bool ok =
+                Invoke(
+                    "AddSliderLocalized",
+                    new Type[]
+                    {
+                        typeof(string),
+                        typeof(string),
+                        typeof(string),
+                        typeof(string),
+                        typeof(int),
+                        typeof(float),
+                        typeof(float),
+                        typeof(float),
+                        typeof(float),
+                        typeof(string),
+                        typeof(string),
+                        typeof(int),
+                        typeof(Func<float>),
+                        typeof(Action<float>)
+                    },
+                    new object[]
+                    {
+                        modId,
+                        settingId,
+                        labelRussian,
+                        labelEnglish,
+                        order,
+                        min,
+                        max,
+                        step,
+                        displayMultiplier,
+                        suffixRussian,
+                        suffixEnglish,
+                        decimals,
+                        getter,
+                        setter
+                    });
+
+            if (ok)
+                return true;
+
+            return AddSlider(
+                modId,
+                settingId,
+                labelRussian,
+                order,
+                min,
+                max,
+                step,
+                displayMultiplier,
+                suffixRussian,
+                decimals,
+                getter,
+                setter);
+        }
+
+        public static bool AddToggleLocalized(
+            string modId,
+            string settingId,
+            string labelRussian,
+            string labelEnglish,
+            int order,
+            string onTextRussian,
+            string onTextEnglish,
+            string offTextRussian,
+            string offTextEnglish,
+            Func<bool> getter,
+            Action<bool> setter)
+        {
+            bool ok =
+                Invoke(
+                    "AddToggleLocalized",
+                    new Type[]
+                    {
+                        typeof(string),
+                        typeof(string),
+                        typeof(string),
+                        typeof(string),
+                        typeof(int),
+                        typeof(string),
+                        typeof(string),
+                        typeof(string),
+                        typeof(string),
+                        typeof(Func<bool>),
+                        typeof(Action<bool>)
+                    },
+                    new object[]
+                    {
+                        modId,
+                        settingId,
+                        labelRussian,
+                        labelEnglish,
+                        order,
+                        onTextRussian,
+                        onTextEnglish,
+                        offTextRussian,
+                        offTextEnglish,
+                        getter,
+                        setter
+                    });
+
+            if (ok)
+                return true;
+
+            return AddToggle(
+                modId,
+                settingId,
+                labelRussian,
+                order,
+                onTextRussian,
+                offTextRussian,
+                getter,
+                setter);
+        }
+
+        public static bool AddChoiceLocalized(
+            string modId,
+            string settingId,
+            string labelRussian,
+            string labelEnglish,
+            int order,
+            string[] choicesRussian,
+            string[] choicesEnglish,
+            Func<int> getter,
+            Action<int> setter)
+        {
+            if (
+                choicesRussian != null &&
+                choicesEnglish != null &&
+                choicesRussian.Length > 0 &&
+                choicesEnglish.Length > 0 &&
+                choicesRussian.Length != choicesEnglish.Length
+            )
+            {
+                return false;
+            }
+
+            bool ok =
+                Invoke(
+                    "AddChoiceLocalized",
+                    new Type[]
+                    {
+                        typeof(string),
+                        typeof(string),
+                        typeof(string),
+                        typeof(string),
+                        typeof(int),
+                        typeof(string[]),
+                        typeof(string[]),
+                        typeof(Func<int>),
+                        typeof(Action<int>)
+                    },
+                    new object[]
+                    {
+                        modId,
+                        settingId,
+                        labelRussian,
+                        labelEnglish,
+                        order,
+                        choicesRussian,
+                        choicesEnglish,
+                        getter,
+                        setter
+                    });
+
+            if (ok)
+                return true;
+
+            return AddChoice(
+                modId,
+                settingId,
+                labelRussian,
+                order,
+                choicesRussian,
+                getter,
+                setter);
+        }
+
+        public static bool AddButtonLocalized(
+            string modId,
+            string settingId,
+            string labelRussian,
+            string labelEnglish,
+            int order,
+            string actionTextRussian,
+            string actionTextEnglish,
+            Action action)
+        {
+            bool ok =
+                Invoke(
+                    "AddButtonLocalized",
+                    new Type[]
+                    {
+                        typeof(string),
+                        typeof(string),
+                        typeof(string),
+                        typeof(string),
+                        typeof(int),
+                        typeof(string),
+                        typeof(string),
+                        typeof(Action)
+                    },
+                    new object[]
+                    {
+                        modId,
+                        settingId,
+                        labelRussian,
+                        labelEnglish,
+                        order,
+                        actionTextRussian,
+                        actionTextEnglish,
+                        action
+                    });
+
+            if (ok)
+                return true;
+
+            return AddButton(
+                modId,
+                settingId,
+                labelRussian,
+                order,
+                actionTextRussian,
+                action);
+        }
+
         public static bool RemoveMod(
             string modId)
         {

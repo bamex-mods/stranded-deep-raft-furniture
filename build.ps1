@@ -75,7 +75,7 @@ foreach ($Reference in $References) {
 
 $Args += $SourceFiles
 
-Write-Host "Building Raft Furniture v0.2.13..."
+Write-Host "Building Raft Furniture v0.2.14..."
 
 & $Csc @Args
 
@@ -107,7 +107,7 @@ if ($Deploy) {
 
     Write-Host "Deployed to: $PluginDir"
     Write-Host ""
-    Write-Host "v0.2.13 deployed:"
+    Write-Host "v0.2.14 deployed:"
     Write-Host "  persistent v0.2.0c attachment/follower baseline retained"
     Write-Host "  tables/chairs: vanilla drag + magnetic raft deck plane"
     Write-Host "  Water Still / Light Hook / Camp Fire structure / Container Shelf: shared surface reposition mode"
