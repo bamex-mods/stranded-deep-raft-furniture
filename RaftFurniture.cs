@@ -20,10 +20,13 @@ namespace BamEx.StrandedDeep.RaftFurniture
     [BepInPlugin(
         "bamex.strandeddeep.raftfurniture",
         "BamEx Raft Furniture",
-        "0.2.14"
+        "0.2.15"
     )]
     [BepInDependency(
         "com.bamex.strandeddeep.modsettings",
+        BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(
+        "com.bamex.strandeddeep.itemframework",
         BepInDependency.DependencyFlags.SoftDependency)]
     public sealed class Plugin : BaseUnityPlugin
     {
@@ -38,7 +41,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
             Instance = this;
             Log = Logger;
 
-            Logger.LogInfo("BamEx Raft Furniture v0.2.14 loading");
+            Logger.LogInfo("BamEx Raft Furniture v0.2.15 loading");
 
             RaftFurnitureSettings.Initialize(Config);
             RaftFurnitureSettings.RegisterModSettings();
@@ -49,6 +52,11 @@ namespace BamEx.StrandedDeep.RaftFurniture
             RaftAttachmentRegistry.Initialize();
             RaftAttachmentRegistry.InstallNativeSaveHook(_harmony);
             RaftAttachmentDiagnosticRegistry.Initialize();
+
+            // Parallel Item Framework integration. Reflection-only and optional;
+            // legacy 0.2.13 attachment/reposition code remains authoritative
+            // for all existing supported constructions/furniture.
+            FrameworkRaftItemBridge.Initialize(_harmony, Config);
 
             Logger.LogInfo("BamEx Raft Furniture loaded");
             Logger.LogInfo("Raft floor layer: 31");
@@ -138,6 +146,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
 
         private void OnDestroy()
         {
+            FrameworkRaftItemBridge.Shutdown();
             RaftAttachmentDiagnosticRegistry.Shutdown();
             RaftAttachmentRegistry.Shutdown();
             RaftFurnitureSettings.UnregisterModSettings();
@@ -218,81 +227,65 @@ namespace BamEx.StrandedDeep.RaftFurniture
                 "Raft Furniture",
                 "AllowManualReposition",
                 false,
-                "Разрешить ручное перемещение raft-объектов через custom L2/LT reposition. Не влияет на placement, attachment, follower или persistence.");
+                "Разрешить ручное перемещение raft-объектов через custom reposition с controller или keyboard/mouse. Не влияет на placement, attachment, follower или persistence.");
         }
 
         internal static void RegisterModSettings()
         {
             try
             {
-                ModSettingsClient.RegisterModLocalized(
+                ModSettingsClient.RegisterMod(
                     ModId,
                     "ПЛОТ — МЕБЕЛЬ И ПОСТРОЙКИ",
-                    "RAFT FURNITURE & STRUCTURES",
                     500);
 
-                ModSettingsClient.AddToggleLocalized(
+                ModSettingsClient.AddToggle(
                     ModId,
                     "water_still",
                     "Водосборник на плоту",
-                    "Water Still on Raft",
                     100,
                     "Вкл.",
-                    "On",
                     "Выкл.",
-                    "Off",
                     delegate { return AllowWaterStillOnRaft; },
                     delegate(bool value) { _allowWaterStillOnRaft.Value = value; });
 
-                ModSettingsClient.AddToggleLocalized(
+                ModSettingsClient.AddToggle(
                     ModId,
                     "campfire_structures",
                     "Костёр и коптильня на плоту",
-                    "Camp Fire Structures on Raft",
                     200,
                     "Вкл.",
-                    "On",
                     "Выкл.",
-                    "Off",
                     delegate { return AllowCampfireStructuresOnRaft; },
                     delegate(bool value) { _allowCampfireStructuresOnRaft.Value = value; });
 
-                ModSettingsClient.AddToggleLocalized(
+                ModSettingsClient.AddToggle(
                     ModId,
                     "light_hook",
                     "Крюк для факела на плоту",
-                    "Light Hook on Raft",
                     300,
                     "Вкл.",
-                    "On",
                     "Выкл.",
-                    "Off",
                     delegate { return AllowLightHookOnRaft; },
                     delegate(bool value) { _allowLightHookOnRaft.Value = value; });
 
-                ModSettingsClient.AddToggleLocalized(
+                ModSettingsClient.AddToggle(
                     ModId,
                     "container_shelf_reposition",
                     "Свободное перемещение полок",
-                    "Free Container Shelf Repositioning",
                     400,
                     "Вкл.",
-                    "On",
                     "Выкл.",
-                    "Off",
                     delegate { return AllowContainerShelfReposition; },
                     delegate(bool value) { _allowContainerShelfReposition.Value = value; });
 
-                ModSettingsClient.AddToggleLocalized(
+                ModSettingsClient.AddToggle(
                     ModId,
                     "manual_reposition",
                     "Ручное перемещение объектов",
-                    "Manual Object Repositioning",
                     500,
                     "Вкл.",
-                    "On",
                     "Выкл.",
-                    "Off",
                     delegate { return AllowManualReposition; },
                     delegate(bool value)
                     {
@@ -301,14 +294,12 @@ namespace BamEx.StrandedDeep.RaftFurniture
                             RaftRepositionController.CancelActiveFromExternal("MANUAL_REPOSITION_DISABLED");
                     });
 
-                ModSettingsClient.AddButtonLocalized(
+                ModSettingsClient.AddButton(
                     ModId,
                     "emergency_upright",
                     "Аварийно выровнять плот",
-                    "Emergency Raft Upright",
                     600,
                     "Выровнять",
-                    "LEVEL RAFT",
                     delegate
                     {
                         RaftEmergencyRecovery.LevelNearestRaft();
@@ -3445,7 +3436,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
 
             EmitRaw("");
             EmitRaw("============================================================");
-            EmitRaw("SESSION START v0.2.14 diagnostic observer " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            EmitRaw("SESSION START v0.2.13 diagnostic observer " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
             EmitRaw("Mode: observer only; production follower/persistence handled by RaftAttachmentRegistry");
             EmitRaw("============================================================");
 
@@ -4363,7 +4354,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
 
             Emit(
                 "INIT",
-                "v0.2.14 persistent follower initialized. records=" +
+                "v0.2.13 persistent follower initialized. records=" +
                 Records.Count +
                 " file=" + PersistenceFile
             );
@@ -5616,7 +5607,8 @@ namespace BamEx.StrandedDeep.RaftFurniture
     internal static class RaftRepositionController
     {
         private const int DragAxisIndex = 4;       // raw P1 L2 / P2 LT
-        private const int RotateButtonIndex = 4;  // raw P1 L1 / P2 LB
+        private const int RotateLeftButtonIndex = 4;   // raw L1 / LB
+        private const int RotateRightButtonIndex = 5;  // raw R1 / RB
         private const float DragThreshold = 0.55f;
 
         private sealed class LocalControllerState
@@ -5625,8 +5617,13 @@ namespace BamEx.StrandedDeep.RaftFurniture
             internal Rewired.Player Player;
             internal Joystick Joystick;
             internal Camera Camera;
+            internal int DragActionId = -1;
+            internal int RotateLeftActionId = -1;
+            internal int RotateRightActionId = -1;
+            internal string DragInputSource = "UNKNOWN";
             internal bool DragHeld;
-            internal bool RotateHeld;
+            internal bool RotateLeftHeld;
+            internal bool RotateRightHeld;
         }
 
         private sealed class SuppressedElementState
@@ -5659,64 +5656,394 @@ namespace BamEx.StrandedDeep.RaftFurniture
                 LocalControllerState state = Controllers[i];
                 Joystick joystick = state.Joystick;
 
-                bool dragNow = false;
-                bool rotateNow = false;
+                bool dragFromAction = false;
+                bool dragFromRaw = false;
 
+                bool rotateLeftFromAction = false;
+                bool rotateLeftFromRaw = false;
+
+                bool rotateRightFromAction = false;
+                bool rotateRightFromRaw = false;
+
+                // Rewired Player actions are device-independent:
+                // keyboard, mouse and remapped controls are all read here.
+                if (state.Player != null)
+                {
+                    try
+                    {
+                        if (state.DragActionId >= 0)
+                        {
+                            dragFromAction =
+                                state.Player.GetButton(
+                                    state.DragActionId) ||
+                                Mathf.Abs(
+                                    state.Player.GetAxis(
+                                        state.DragActionId)) >
+                                    DragThreshold;
+                        }
+
+                        int rotateActionId =
+                            state.RotateLeftActionId >= 0
+                                ? state.RotateLeftActionId
+                                : state.RotateRightActionId;
+
+                        if (rotateActionId >= 0)
+                        {
+                            float rotateAxis =
+                                state.Player.GetAxis(
+                                    rotateActionId);
+
+                            rotateLeftFromAction =
+                                rotateAxis < -0.5f;
+
+                            rotateRightFromAction =
+                                rotateAxis > 0.5f;
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                // Stranded Deep keeps the keyboard/mouse placement map
+                // disabled outside vanilla placement mode. Read the physical
+                // elements referenced by those existing bindings directly,
+                // without enabling the whole vanilla map.
+                if (state.Player != null)
+                {
+                    try
+                    {
+                        if (!dragFromAction &&
+                            state.DragActionId >= 0)
+                        {
+                            float rawMappedDrag =
+                                ReadRawMappedKbmAction(
+                                    state,
+                                    state.DragActionId);
+
+                            dragFromAction =
+                                Mathf.Abs(rawMappedDrag) >
+                                DragThreshold;
+                        }
+
+                        int rawRotateActionId =
+                            state.RotateLeftActionId >= 0
+                                ? state.RotateLeftActionId
+                                : state.RotateRightActionId;
+
+                        if (rawRotateActionId >= 0)
+                        {
+                            float rawMappedRotate =
+                                ReadRawMappedKbmAction(
+                                    state,
+                                    rawRotateActionId);
+
+                            if (rawMappedRotate < -0.5f)
+                                rotateLeftFromAction = true;
+
+                            if (rawMappedRotate > 0.5f)
+                                rotateRightFromAction = true;
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                // Preserve proven raw controller input as fallback.
                 if (joystick != null)
                 {
                     try
                     {
-                        dragNow = joystick.GetAxis(DragAxisIndex) > DragThreshold;
-                        rotateNow = joystick.GetButton(RotateButtonIndex);
+                        dragFromRaw =
+                            joystick.GetAxis(DragAxisIndex) >
+                            DragThreshold;
+
+                        rotateLeftFromRaw =
+                            joystick.GetButton(
+                                RotateLeftButtonIndex);
+
+                        rotateRightFromRaw =
+                            joystick.GetButton(
+                                RotateRightButtonIndex);
                     }
                     catch
                     {
-                        dragNow = false;
-                        rotateNow = false;
                     }
                 }
 
-                bool dragPressed = dragNow && !state.DragHeld;
-                bool dragReleased = !dragNow && state.DragHeld;
-                bool rotatePressed = rotateNow && !state.RotateHeld;
+                bool dragNow =
+                    dragFromAction || dragFromRaw;
 
-                // No custom construction reposition active: a fresh Drag Item
-                // press may start one for the object under this player's camera.
-                // Furniture is deliberately ignored here and continues through
-                // the game's native InteractiveObject.BeginDrag/EndDrag path.
-                if (Active == null && dragPressed && RaftFurnitureSettings.AllowManualReposition)
+                bool rotateLeftNow =
+                    rotateLeftFromAction || rotateLeftFromRaw;
+
+                bool rotateRightNow =
+                    rotateRightFromAction || rotateRightFromRaw;
+
+                bool dragPressed =
+                    dragNow && !state.DragHeld;
+
+                bool dragReleased =
+                    !dragNow && state.DragHeld;
+
+                bool rotateLeftPressed =
+                    rotateLeftNow &&
+                    !state.RotateLeftHeld;
+
+                bool rotateRightPressed =
+                    rotateRightNow &&
+                    !state.RotateRightHeld;
+
+                if (Active == null &&
+                    dragPressed &&
+                    RaftFurnitureSettings.AllowManualReposition)
                 {
+                    if (dragFromAction && dragFromRaw)
+                        state.DragInputSource =
+                            "REWIRED_ACTION_AND_RAW";
+                    else if (dragFromAction)
+                        state.DragInputSource =
+                            "REWIRED_ACTION";
+                    else if (dragFromRaw)
+                        state.DragInputSource =
+                            "RAW_JOYSTICK";
+                    else
+                        state.DragInputSource =
+                            "UNKNOWN";
+
                     TryBeginFromPlayerCamera(state);
                 }
-                else if (Active != null && Active.OwnerPlayerId == state.PlayerId)
+                else if (Active != null &&
+                         Active.OwnerPlayerId == state.PlayerId)
                 {
-                    if (rotatePressed)
+                    // Preserve existing L1/LB direction.
+                    if (rotateLeftPressed)
                     {
-                        Active.LocalYaw = NormalizeYaw(Active.LocalYaw + 15.0f);
+                        Active.LocalYaw =
+                            NormalizeYaw(
+                                Active.LocalYaw + 15.0f);
+
+                        string source =
+                            rotateLeftFromAction &&
+                            rotateLeftFromRaw
+                                ? "ACTION_AND_RAW"
+                                : rotateLeftFromAction
+                                    ? "ACTION"
+                                    : "RAW";
 
                         Emit(
                             "ROTATE",
-                            "player=P" + (state.PlayerId + 1) +
-                            " target=" + (Active.Root != null ? Active.Root.name : "<missing>") +
-                            " yaw=" + Active.LocalYaw.ToString("F2")
+                            "player=P" +
+                            (state.PlayerId + 1) +
+                            " direction=LEFT" +
+                            " source=" + source +
+                            " target=" +
+                            (Active.Root != null
+                                ? Active.Root.name
+                                : "<missing>") +
+                            " yaw=" +
+                            Active.LocalYaw.ToString("F2")
                         );
                     }
 
-                    // Drag/drop UX: releasing L2/LT is the drop action.
+                    if (rotateRightPressed)
+                    {
+                        Active.LocalYaw =
+                            NormalizeYaw(
+                                Active.LocalYaw - 15.0f);
+
+                        string source =
+                            rotateRightFromAction &&
+                            rotateRightFromRaw
+                                ? "ACTION_AND_RAW"
+                                : rotateRightFromAction
+                                    ? "ACTION"
+                                    : "RAW";
+
+                        Emit(
+                            "ROTATE",
+                            "player=P" +
+                            (state.PlayerId + 1) +
+                            " direction=RIGHT" +
+                            " source=" + source +
+                            " target=" +
+                            (Active.Root != null
+                                ? Active.Root.name
+                                : "<missing>") +
+                            " yaw=" +
+                            Active.LocalYaw.ToString("F2")
+                        );
+                    }
+
                     if (dragReleased)
                     {
                         if (Active.HasValidDeckPoint)
                             Confirm();
                         else
-                            CancelWithReason("DROP_CANCEL_INVALID");
+                            CancelWithReason(
+                                "DROP_CANCEL_INVALID");
                     }
                 }
 
                 state.DragHeld = dragNow;
-                state.RotateHeld = rotateNow;
+                state.RotateLeftHeld = rotateLeftNow;
+                state.RotateRightHeld = rotateRightNow;
             }
         }
+        private static float ReadRawMappedKbmAction(
+            LocalControllerState state,
+            int actionId)
+        {
+            if (state == null ||
+                state.Player == null ||
+                actionId < 0)
+            {
+                return 0.0f;
+            }
 
+            if (!state.Player.controllers.hasKeyboard &&
+                !state.Player.controllers.hasMouse)
+            {
+                return 0.0f;
+            }
+
+            float result = 0.0f;
+
+            Keyboard keyboard =
+                ReInput.controllers.Keyboard;
+
+            Mouse mouse =
+                ReInput.controllers.Mouse;
+
+            IEnumerable<ControllerMap> maps =
+                state.Player.controllers.maps
+                    .GetAllMaps<ControllerMap>();
+
+            foreach (ControllerMap map in maps)
+            {
+                if (map == null)
+                    continue;
+
+                if (map.controllerType != ControllerType.Keyboard &&
+                    map.controllerType != ControllerType.Mouse)
+                {
+                    continue;
+                }
+
+                IList<ActionElementMap> bindings =
+                    map.AllMaps;
+
+                if (bindings == null)
+                    continue;
+
+                for (int i = 0; i < bindings.Count; i++)
+                {
+                    ActionElementMap binding =
+                        bindings[i];
+
+                    if (binding == null ||
+                        !binding.enabled ||
+                        binding.actionId != actionId)
+                    {
+                        continue;
+                    }
+
+                    bool active = false;
+                    float magnitude = 0.0f;
+
+                    if (map.controllerType ==
+                        ControllerType.Keyboard)
+                    {
+                        if (keyboard == null)
+                            continue;
+
+                        // Keyboard mappings in this game are buttons.
+                        active =
+                            keyboard.GetButton(
+                                binding.elementIndex);
+
+                        magnitude =
+                            active ? 1.0f : 0.0f;
+                    }
+                    else
+                    {
+                        if (mouse == null)
+                            continue;
+
+                        if (binding.elementType ==
+                            ControllerElementType.Button)
+                        {
+                            active =
+                                mouse.GetButton(
+                                    binding.elementIndex);
+
+                            magnitude =
+                                active ? 1.0f : 0.0f;
+                        }
+                        else
+                        {
+                            float raw =
+                                mouse.GetAxis(
+                                    binding.elementIndex);
+
+                            string range =
+                                binding.axisRange.ToString();
+
+                            if (range == "Positive")
+                            {
+                                active = raw > 0.05f;
+                                magnitude =
+                                    active
+                                        ? Mathf.Abs(raw)
+                                        : 0.0f;
+                            }
+                            else if (range == "Negative")
+                            {
+                                active = raw < -0.05f;
+                                magnitude =
+                                    active
+                                        ? Mathf.Abs(raw)
+                                        : 0.0f;
+                            }
+                            else
+                            {
+                                active =
+                                    Mathf.Abs(raw) > 0.05f;
+
+                                magnitude =
+                                    active
+                                        ? Mathf.Abs(raw)
+                                        : 0.0f;
+                            }
+                        }
+                    }
+
+                    if (!active)
+                        continue;
+
+                    float signed =
+                        binding.axisContribution.ToString() ==
+                        "Negative"
+                            ? -magnitude
+                            : magnitude;
+
+                    if (binding.invert)
+                        signed = -signed;
+
+                    if (Mathf.Abs(signed) >
+                        Mathf.Abs(result))
+                    {
+                        result = signed;
+                    }
+                }
+            }
+
+            return Mathf.Clamp(
+                result,
+                -1.0f,
+                1.0f);
+        }
         internal static void CancelActiveFromExternal(string reason)
         {
             if (Active == null)
@@ -5827,6 +6154,9 @@ namespace BamEx.StrandedDeep.RaftFurniture
                 LocalControllerState state = Controllers[i];
                 state.Player = null;
                 state.Joystick = null;
+                state.DragActionId = -1;
+                state.RotateLeftActionId = -1;
+                state.RotateRightActionId = -1;
                 state.Camera = i < gameplayCameras.Length
                     ? gameplayCameras[i]
                     : null;
@@ -5839,6 +6169,27 @@ namespace BamEx.StrandedDeep.RaftFurniture
                     Rewired.Player player = ReInput.players.GetPlayer(state.PlayerId);
                     state.Player = player;
 
+                    if (player != null)
+                    {
+                        state.DragActionId =
+                            ResolveActionId(
+                                player,
+                                "Drag Item",
+                                "Drag");
+
+                        state.RotateLeftActionId =
+                            ResolveActionId(
+                                player,
+                                "Rotate Object Left",
+                                "Rotate Object Left");
+
+                        state.RotateRightActionId =
+                            ResolveActionId(
+                                player,
+                                "Rotate Object Right",
+                                "Rotate Object Right");
+                    }
+
                     if (player != null && player.controllers.Joysticks.Count > 0)
                         state.Joystick = player.controllers.Joysticks[0];
                 }
@@ -5850,6 +6201,81 @@ namespace BamEx.StrandedDeep.RaftFurniture
             }
         }
 
+        private static int ResolveActionId(
+            Rewired.Player player,
+            string exactDescription,
+            string containsDescription)
+        {
+            if (player == null)
+                return -1;
+
+            try
+            {
+                IEnumerable<ControllerMap> maps =
+                    player.controllers.maps.GetAllMaps<ControllerMap>();
+
+                foreach (ControllerMap map in maps)
+                {
+                    if (map == null)
+                        continue;
+
+                    IList<ActionElementMap> buttonMaps =
+                        map.ButtonMaps;
+
+                    if (buttonMaps != null)
+                    {
+                        for (int i = 0; i < buttonMaps.Count; i++)
+                        {
+                            ActionElementMap actionMap =
+                                buttonMaps[i];
+
+                            if (ActionDescriptionMatches(
+                                    actionMap,
+                                    exactDescription,
+                                    containsDescription))
+                            {
+                                return actionMap.actionId;
+                            }
+                        }
+                    }
+
+
+                }
+            }
+            catch
+            {
+            }
+
+            return -1;
+        }
+
+        private static bool ActionDescriptionMatches(
+            ActionElementMap actionMap,
+            string exactDescription,
+            string containsDescription)
+        {
+            if (actionMap == null)
+                return false;
+
+            string description =
+                actionMap.actionDescriptiveName ??
+                String.Empty;
+
+            if (!String.IsNullOrEmpty(exactDescription) &&
+                String.Equals(
+                    description,
+                    exactDescription,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return
+                !String.IsNullOrEmpty(containsDescription) &&
+                description.IndexOf(
+                    containsDescription,
+                    StringComparison.OrdinalIgnoreCase) >= 0;
+        }
         private static Camera[] GetGameplayCamerasSorted()
         {
             List<Camera> cameras = new List<Camera>();
@@ -5927,7 +6353,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
 
         private static void TryBeginFromPlayerCamera(LocalControllerState state)
         {
-            if (state == null || state.Camera == null || state.Joystick == null)
+            if (state == null || state.Camera == null || state.Player == null)
                 return;
 
             Camera camera = state.Camera;
@@ -6017,7 +6443,10 @@ namespace BamEx.StrandedDeep.RaftFurniture
 
             Active = best;
             Active.OwnerPlayerId = state.PlayerId;
-            Active.OwnerJoystickId = state.Joystick.id;
+            Active.OwnerJoystickId =
+                state.Joystick != null
+                    ? state.Joystick.id
+                    : -1;
 
             Active.OriginalPosition = Active.Root.position;
             Active.OriginalRotation = Active.Root.rotation;
@@ -6051,7 +6480,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
             Emit(
                 "BEGIN",
                 "player=P" + (state.PlayerId + 1) +
-                " input=DRAG_L2_LT" +
+                " input=" + state.DragInputSource +
                 " kind=" + Active.Kind +
                 " target=" + Active.Root.name +
                 " raft=" + SafeReferenceId(Active.Raft) +
@@ -6077,7 +6506,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
                 // This deliberately mirrors the already field-tested Split Map
                 // suppression path: filter the owning joystick ControllerMap, then
                 // inspect ButtonMaps by raw elementIndex. For our two controllers
-                // raw button 4 is L1/LB. Do not use elementIdentifierId here.
+                // raw buttons 4/5 are L1/LB and R1/RB. Do not use elementIdentifierId here.
                 IEnumerable<ControllerMap> maps =
                     state.Player.controllers.maps.GetAllMaps<ControllerMap>();
 
@@ -6099,7 +6528,8 @@ namespace BamEx.StrandedDeep.RaftFurniture
                         ActionElementMap actionMap = buttonMaps[i];
 
                         if (actionMap == null ||
-                            actionMap.elementIndex != RotateButtonIndex)
+                            (actionMap.elementIndex != RotateLeftButtonIndex &&
+                             actionMap.elementIndex != RotateRightButtonIndex))
                         {
                             continue;
                         }
@@ -6131,7 +6561,7 @@ namespace BamEx.StrandedDeep.RaftFurniture
                 {
                     Emit(
                         "INPUT_SUPPRESS_WARNING",
-                        "No L1/LB ActionElementMap found for player=P" +
+                        "No L1/LB or R1/RB ActionElementMap found for player=P" +
                         (state.PlayerId + 1) +
                         " joystick=" + state.Joystick.id
                     );

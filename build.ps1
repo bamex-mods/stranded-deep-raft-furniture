@@ -9,6 +9,8 @@ $ErrorActionPreference = "Stop"
 $ProjectName = "StrandedDeepRaftFurniture"
 $SourceFiles = @(
     (Join-Path $PSScriptRoot "RaftFurniture.cs"),
+    (Join-Path $PSScriptRoot "FrameworkRaftItems.cs"),
+    (Join-Path $PSScriptRoot "SDK\ItemFrameworkClient.cs"),
     (Join-Path $PSScriptRoot "SDK\ModSettingsClient.cs")
 )
 $BuildDir = Join-Path $PSScriptRoot "build"
@@ -75,7 +77,7 @@ foreach ($Reference in $References) {
 
 $Args += $SourceFiles
 
-Write-Host "Building Raft Furniture v0.2.14..."
+Write-Host "Building Raft Furniture v0.2.15..."
 
 & $Csc @Args
 
@@ -107,7 +109,7 @@ if ($Deploy) {
 
     Write-Host "Deployed to: $PluginDir"
     Write-Host ""
-    Write-Host "v0.2.14 deployed:"
+    Write-Host "v0.2.15 deployed:"
     Write-Host "  persistent v0.2.0c attachment/follower baseline retained"
     Write-Host "  tables/chairs: vanilla drag + magnetic raft deck plane"
     Write-Host "  Water Still / Light Hook / Camp Fire structure / Container Shelf: shared surface reposition mode"
@@ -132,4 +134,10 @@ if ($Deploy) {
     Write-Host "  v0.2.12: non-raft-body pair states are restored exactly; dynamic raft-body pairs remain ignored after drop"
     Write-Host "  v0.2.13: solid Water Still / STRUCTURE_SMALL colliders are disabled only while custom reposition is active"
     Write-Host "  v0.2.13: trigger colliders remain enabled; exact solid-collider enabled states are restored on confirm/cancel"
+    Write-Host "  v0.2.14: optional Item Framework API v1 integration for RaftSurface-capable items"
+    Write-Host "  v0.2.14: Framework items attach at runtime without a second raft-item sidecar"
+    Write-Host "  v0.2.14: cold-load rebind reconstructs attachment from native restored world pose"
+    Write-Host "  v0.2.14: Framework integration remains parallel to legacy furniture/construction systems"
+    Write-Host "  v0.2.15: keyboard/mouse support for Manual Reposition through per-player Rewired actions; controller raw-input fallback preserved"
+    Write-Host "  framework item log: BepInEx\config\StrandedDeepRaftFurniture\ItemApiRuntime.log"
 }

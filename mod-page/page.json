@@ -1,31 +1,30 @@
 {
-    "schemaVersion":  1,
-    "id":  "raft-furniture",
-    "defaultLocale":  "en",
-    "locales":  {
-                    "en":  "en.json",
-                    "ru":  "ru.json"
-                },
-    "media":  {
-                  "icon":  "media/icon.png",
-                  "screenshots":  [
-
-                                  ]
-              },
-    "tags":  [
-                 "raft",
-                 "building",
-                 "furniture",
-                 "split_screen",
-                 "gamepad",
-                 "persistence",
-                 "settings",
-                 "quality_of_life"
-             ],
-    "highlights":  [
-                       "raft",
-                       "building",
-                       "split_screen",
-                       "persistence"
-                   ]
+    "schemaVersion": 1,
+    "id": "raft-furniture",
+    "defaultLocale": "en",
+    "locales": {
+        "en": "en.json",
+        "ru": "ru.json"
+    },
+    "media": {
+        "icon": "media/icon.png",
+        "screenshots": []
+    },
+    "tags": [
+        "raft",
+        "building",
+        "furniture",
+        "split_screen",
+        "gamepad",
+        "persistence",
+        "settings",
+        "quality_of_life",
+        "item_framework"
+    ],
+    "highlights": [
+        "raft",
+        "building",
+        "split_screen",
+        "persistence"
+    ]
 }

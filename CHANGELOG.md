@@ -1,11 +1,40 @@
 # Changelog
 
-## 0.2.14 - 2026-10-05
+## 0.2.15 вЂ” 2026-10-24
 
-- Added Russian/English Mod Settings localization.
-- Synced the vendored Mod Settings reflection bridge with the authoritative bilingual SDK.
-- No gameplay, controller, attachment or persistence behavior changed.
-- Russian/English Mod Settings and local split-screen gameplay were field-tested before publication.
+### Added
+- Keyboard and mouse support for custom Manual Reposition.
+- Bidirectional rotation through the game's existing `Rotate Object` bindings.
+- User-remapped keyboard/mouse controls are respected by reading the existing Rewired mappings.
+
+### Changed
+- Manual Reposition input is now split-screen aware across keyboard/mouse P1 and controller players.
+- Controller support keeps the proven raw L2/LT drag and L1/LB / R1/RB rotation fallback.
+
+### Fixed
+- Fixed keyboard rotation failing outside vanilla placement mode because Stranded Deep keeps the relevant Rewired keyboard/mouse `ControllerMap` disabled.
+- The mod now reads the physical elements referenced by the player's existing mappings without enabling the vanilla placement map.
+- Temporary KB/M diagnostic code used during development is not part of the release source.
+
+### Compatibility
+- No changes to raft attachment persistence, save format, Framework item integration, follower logic, or raft collision architecture.
+
+## 0.2.14 - 2026-10-22
+
+- Adds optional soft integration with Stranded Deep Item Framework API v1.
+- Adds support for Framework item types declaring the `RaftSurface` capability.
+- Keeps the new Framework path strictly parallel to the existing Raft Furniture systems; legacy `RaftAttachmentRegistry`, `Attachments.json`, tables/chairs, Water Still, Light Hook, `STRUCTURE_SMALL`, Container Shelf and custom reposition behavior are not migrated.
+- Uses reflection-only Framework binding, so Raft Furniture continues to load normally when Item Framework is absent.
+- Adds per-instance Framework raft agents with cached references; there is no global Framework-item world scan.
+- Captures full raft-local position and quaternion rotation for attached Framework items.
+- Applies targeted item-to-owning-raft collision ignores while attached and restores prior collision states on detach.
+- Preserves the proven pickup safety rule: old own-raft collision is not restored prematurely while an item is still leaving the deck.
+- Reattaches Framework items when dropped back onto the same or another raft and returns normal world behavior when dropped off-raft.
+- Adds bounded cold-load rebind for active, non-held Framework items restored kinematic on a raft deck.
+- Keeps native Stranded Deep + Item Framework save state authoritative for Framework item existence/world pose; no second Framework-item attachment sidecar is introduced.
+- Adds `ItemApiRuntime.log` for Framework bridge diagnostics.
+- Focused field test passed with two independent `RaftSurface` test items, including P2 pickup/drop, raft movement, Save -> full exit -> restart -> Load, automatic rebind, and raft movement after load.
+- Framework bridge safety switch is enabled by default and remains isolated from all legacy Raft Furniture paths.
 
 ## 0.2.13 - 2026-10-04
 
@@ -28,3 +57,5 @@
 - Retains optional Mod Settings integration.
 - Adds/retains manual reposition configuration and emergency raft-upright recovery.
 - No persistence format migration is introduced by this public-source canonicalization.
+
+
