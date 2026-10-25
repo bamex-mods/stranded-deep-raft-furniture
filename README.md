@@ -1,14 +1,26 @@
 # Stranded Deep Raft Furniture
 
-## Current release
+## Current version status
 
-**0.2.15**
+**v0.2.16 is a local integration release candidate, not published.** Last public stable release: **v0.2.15**. Source and tested runtime components are assembled into one repository/package without merging the BepInEx plugin identities.
+
+**Building Bridge v0.1.21 (included):** native walls, windows, roof elements and correctly snapped doors can follow a moving raft, including split-screen P1/P2 building and Save/Load recovery for tested constructions. Bridge creation on a new raft is currently triggered by the **F9 development hotkey**, not automatic. F10 is guarded for deployed/saved bridges. Not all active BUILDING types have been independently field-tested for placement; Atlas coverage relates to recovery recognition only. See `docs/BUILDING_BRIDGE.md` and `docs/INTEGRATION_RC_TEST_PLAN.md`.
+
+### Two runtime components
+
+| Runtime DLL | BepInEx plugin GUID | Internal version |
+| --- | --- | --- |
+| `StrandedDeepRaftFurniture.dll` | `bamex.strandeddeep.raftfurniture` | `0.2.15` |
+| `StrandedDeepRaftBuildingBridgePrototype.dll` | `bamex.strandeddeep.raftbuildingbridgeprototype` | `0.1.21` |
+
+The aggregate package version is **0.2.16**. Internal plugin versions deliberately remain unchanged during this initial packaging-only integration to avoid altering the field-tested assemblies. `Attachments.json` remains the furniture-only sidecar; the Bridge uses native game saves plus runtime recovery.
+
 
 Manual Reposition supports both controller and keyboard/mouse input in local split-screen. Keyboard/mouse rotation follows the player's existing Stranded Deep `Rotate Object` bindings, including user remapping, while controller input retains the proven raw-input fallback.
 
 Stranded Deep Raft Furniture turns the raft into a practical mobile base by allowing selected furniture, survival structures, and compatible Item Framework items to remain stable on a moving raft. The mod is designed for two-player local split-screen and preserves the existing vanilla construction chains and interaction lifecycles wherever possible.
 
-Current stable release: `0.2.14`
+Last published stable release: `0.2.15`
 
 ## 0.2.14 вЂ” Item Framework RaftSurface integration
 

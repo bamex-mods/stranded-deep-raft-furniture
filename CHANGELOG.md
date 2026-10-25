@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.16 — integration release candidate (NOT PUBLISHED)
+
+- Bundles the field-tested Raft Furniture v0.2.15 and Building Bridge v0.1.21 sources and runtime DLLs under the existing Raft Furniture repository.
+- Adds the Bridge runtime path to explicit `packagePaths` and `ownedPaths` for the Mod Manager.
+- Preserves both BepInEx plugin GUIDs, both separate assemblies, and both persistence models.
+- Includes a safe build-only orchestration script and a local release-candidate staging tool that verifies the exact installed runtime DLL hashes.
+- No gameplay code changes to the Furniture or Bridge components. The merged package still requires a combined field-test before public release.
+- Known Bridge limitation: F9 is still a manual development command for setting up a new raft; F10 must not be used on a deployed saved bridge.
+
+
 ## 0.2.15 вЂ” 2026-10-24
 
 ### Added

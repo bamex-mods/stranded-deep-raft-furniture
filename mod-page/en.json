@@ -1,61 +1,67 @@
 {
-    "schemaVersion": 1,
-    "locale": "en",
-    "subtitle": "Turn the raft into a mobile base with furniture, survival structures, and compatible Item Framework items.",
-    "description": "Raft Furniture expands the raft into a practical mobile base. It supports selected furniture and survival structures, local split-screen repositioning, persistent legacy raft attachment, and optional automatic raft-deck behavior for Item Framework items that declare the RaftSurface capability.",
-    "features": [
-        "Tables and chairs can be used as persistent raft furniture.",
-        "Water Still can be placed and repositioned on the raft.",
-        "Light Hook can be placed and repositioned on the raft.",
-        "Camp Fire, Fire Pit and Smoker keep their vanilla construction chain while working on the raft.",
-        "Food attached to raft cooking stations is re-anchored to the station when required.",
-        "Container Shelf can be freely repositioned while retaining native crate/socket behavior.",
-        "Reposition controls are resolved for the owning local player in local split-screen.",
-        "L2/LT is used for drag/drop and L1/LB rotates the active target in 15-degree steps.",
-        "Supported furniture uses persistent raft-local attachment data rather than relying only on transform parenting.",
-        "Older/unparented supported raft furniture has recovery paths into the persistent attachment model.",
-        "Optional Mod Settings integration exposes five toggles while the BepInEx config remains the source of truth.",
-        "Manual custom reposition is conservative and disabled by default.",
-        "An Emergency Upright action can level the nearest raft.",
-        "Item Framework items that declare the RaftSurface capability can automatically attach to raft decks.",
-        "Framework-item support is a soft, parallel integration and does not replace the existing furniture/construction attachment systems.",
-        "Framework items rebind after native cold restore without a second Raft Furniture sidecar.",
-        "Update policy requests backup of game/config/sidecar state before replacement."
-    ],
-    "screenshotCaptions": {},
-    "faq": [
-        {
-            "question": "Does it support local split-screen?",
-            "answer": "Yes. Reposition input is resolved per local player and is designed for two-player local split-screen sessions."
-        },
-        {
-            "question": "Is Mod Settings required?",
-            "answer": "No. Mod Settings is a soft dependency used only to expose Raft Furniture settings in the in-game settings UI. The mod continues to work from its BepInEx config without it."
-        },
-        {
-            "question": "What happens to existing objects if I disable a category?",
-            "answer": "Existing placed objects are not intentionally deleted or detached. Category toggles stop the mod from providing new placement/reposition behavior for that category."
-        },
-        {
-            "question": "Where is raft attachment state stored?",
-            "answer": "The mod uses BepInEx/config/StrandedDeepRaftFurniture/Attachments.json for persistent object-to-raft association and raft-local pose data."
-        },
-        {
-            "question": "Does Container Shelf keep its crate slots?",
-            "answer": "Yes. Free reposition moves the shelf root while preserving its native crate/socket components."
-        },
-        {
-            "question": "What does Emergency Upright do?",
-            "answer": "It levels the nearest raft as a recovery action. It is exposed as a button through optional Mod Settings integration."
-        },
-        {
-            "question": "Does every Item Framework item attach to the raft?",
-            "answer": "No. Only item types that explicitly declare the RaftSurface capability are handled by the Framework bridge; other Framework items are ignored."
-        },
-        {
-            "question": "Does Framework-item raft attachment use Attachments.json?",
-            "answer": "No. Attachments.json remains the legacy furniture sidecar. Framework item existence/world pose comes from native save/restore and raft association is reconstructed at runtime after load."
-        }
-    ],
-    "changelog": []
+  "schemaVersion": 1,
+  "locale": "en",
+  "subtitle": "Build a mobile raft base with furniture, walls, windows, roofs and split-screen support.",
+  "description": "Raft Furniture brings persistent furniture, selected survival structures and Item Framework RaftSurface items onto moving rafts. The 0.2.16 integration release candidate also packages the tested Building Bridge 0.1.21 for native walls, windows, roofs and doors snapped into frames. Both components retain their separate plugins and persistence systems; new raft bridge creation remains a manual F9 development operation.",
+  "features": [
+    "Building Bridge supports native construction snapping for P1/P2 on a prepared raft: tested walls, windows, roof elements and doors in frames move with the raft.",
+    "Save/Load auto-recovers tested native raft building structures; recognition catalog includes active building types but not all placement types are field-tested.",
+    "Tables and chairs can be used as persistent raft furniture.",
+    "Water Still can be placed and repositioned on the raft.",
+    "Light Hook can be placed and repositioned on the raft.",
+    "Camp Fire, Fire Pit and Smoker keep their vanilla construction chain while working on the raft.",
+    "Food attached to raft cooking stations is re-anchored to the station when required.",
+    "Container Shelf can be freely repositioned while retaining native crate/socket behavior.",
+    "Reposition controls are resolved for the owning local player in local split-screen.",
+    "L2/LT is used for drag/drop and L1/LB rotates the active target in 15-degree steps.",
+    "Supported furniture uses persistent raft-local attachment data rather than relying only on transform parenting.",
+    "Older/unparented supported raft furniture has recovery paths into the persistent attachment model.",
+    "Optional Mod Settings integration exposes five toggles while the BepInEx config remains the source of truth.",
+    "Manual custom reposition is conservative and disabled by default.",
+    "An Emergency Upright action can level the nearest raft.",
+    "Item Framework items that declare the RaftSurface capability can automatically attach to raft decks.",
+    "Framework-item support is a soft, parallel integration and does not replace the existing furniture/construction attachment systems.",
+    "Framework items rebind after native cold restore without a second Raft Furniture sidecar.",
+    "Update policy requests backup of game/config/sidecar state before replacement."
+  ],
+  "screenshotCaptions": {},
+  "faq": [
+    {
+      "question": "Does it support local split-screen?",
+      "answer": "Yes. Reposition input is resolved per local player and is designed for two-player local split-screen sessions."
+    },
+    {
+      "question": "Is Mod Settings required?",
+      "answer": "No. Mod Settings is a soft dependency used only to expose Raft Furniture settings in the in-game settings UI. The mod continues to work from its BepInEx config without it."
+    },
+    {
+      "question": "What happens to existing objects if I disable a category?",
+      "answer": "Existing placed objects are not intentionally deleted or detached. Category toggles stop the mod from providing new placement/reposition behavior for that category."
+    },
+    {
+      "question": "Where is raft attachment state stored?",
+      "answer": "The mod uses BepInEx/config/StrandedDeepRaftFurniture/Attachments.json for persistent object-to-raft association and raft-local pose data."
+    },
+    {
+      "question": "Does Container Shelf keep its crate slots?",
+      "answer": "Yes. Free reposition moves the shelf root while preserving its native crate/socket components."
+    },
+    {
+      "question": "What does Emergency Upright do?",
+      "answer": "It levels the nearest raft as a recovery action. It is exposed as a button through optional Mod Settings integration."
+    },
+    {
+      "question": "Does every Item Framework item attach to the raft?",
+      "answer": "No. Only item types that explicitly declare the RaftSurface capability are handled by the Framework bridge; other Framework items are ignored."
+    },
+    {
+      "question": "Does Framework-item raft attachment use Attachments.json?",
+      "answer": "No. Attachments.json remains the legacy furniture sidecar. Framework item existence/world pose comes from native save/restore and raft association is reconstructed at runtime after load."
+    },
+    {
+      "question": "Does the Building Bridge automatically work on a newly built raft?",
+      "answer": "Not yet. This release candidate retains a manual F9 development command to create the bridge on a suitable raft. Do not use F10 on an existing saved bridge."
+    }
+  ],
+  "changelog": []
 }
